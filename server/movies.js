@@ -1,10 +1,11 @@
-const Movie = require('../models/Movie')
-const asyncWrapper = require('../middleware/async-wrapper')
-const BaseError = require('../middleware/error-handler')
+const Movie = require('./models/Movie')
+const asyncWrapper = require('./middleware/async-wrapper')
+const BaseError = require('./middleware/error-handler')
 
 
 function calculateDistance(movie1, movie2) {
   // due to weird data by kaggle
+  // redo backend names and movie schema
   const movie1Genres = JSON.parse(movie1.genres.replace(/'/g, '"')).map((genre) => genre.name)
   const movie2Genres = JSON.parse(movie2.genres.replace(/'/g, '"')).map((genre) => genre.name)
 
