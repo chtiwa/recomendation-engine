@@ -1,0 +1,2 @@
+GET http://localhost:5000/api/v1/movies/recommend?genres=action&_id=6423942ca243ef348c1967b6&vote_average=7.7&vote_count=5415
+content-type:application/json
