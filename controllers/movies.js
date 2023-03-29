@@ -3,7 +3,35 @@ const asyncWrapper = require('../middleware/async-wrapper')
 const BaseError = require('../middleware/error-handler')
 
 
-const getMovieRecommendation = asyncWrapper(async (req, res) => {
+function calculateDistance(movie1, movie2) {
+  // due to weird data by kaggle
+  const movie1Genres = JSON.parse(movie1.genres.replace(/'/g, '"')).map((genre) => genre.name)
+  const movie2Genres = JSON.parse(movie2.genres.replace(/'/g, '"')).map((genre) => genre.name)
+
+  const union = [...movie1Genres, ...movie2Genres]
+  const intersection = movie1Genres.filter((genre) => movie2Genres.includes(genre))
+
+  const distance = Math.sqrt(union.map((genre) => intersection.includes(genre) ? Math.pow(Number(movie1.vote_average) - Number(movie2.vote_average)) : 0).reduce((sum, x) => sum + x, 0))
+  return 1 / (1 + distance)
+}
+
+const getMovieRecommendationV_1 = asyncWrapper(async (req, res) => {
+  const movie = await Movie.findById(req.query.movie_id)
+  if (!movie) {
+    throw new BaseError("The movie doesn't exist", 404)
+  }
+
+  const movies = await Movie.find({ _id: { $ne: movie._id } }).limit(100)
+  const distances = movies.map((otherMovie) => ({ movie: otherMovie, distance: calculateDistance(movie, otherMovie) }))
+
+  distances.sort((a, b) => b.distance - a.distance)
+
+  const recommendations = distances.map((distance) => distance.movie)
+  res.status(200).json({ success: true, movies: recommendations })
+
+})
+
+const getMovieRecommendationV_2 = asyncWrapper(async (req, res) => {
   const movies = await Movie.aggregate([
     {
       $match: {
@@ -21,11 +49,13 @@ const getMovieRecommendation = asyncWrapper(async (req, res) => {
         overview: 1,
         release_date: 1,
         genres: 1,
+        runtime: 1,
         distance: {
           $sqrt: {
             $add: [
               { $pow: [{ $subtract: [Number(req.query.vote_average), { $toDecimal: "$vote_average" }] }, 2] },
               { $pow: [{ $subtract: [Number(req.query.vote_count), { $toDecimal: "$vote_count" }] }, 2] },
+              { $pow: [{ $subtract: [Number(req.query.runtime), { $toDecimal: "$runtime" }] }, 2] },
             ]
           }
         }
@@ -37,7 +67,7 @@ const getMovieRecommendation = asyncWrapper(async (req, res) => {
     }, {
       $sort: { distance: 1 }
     }, {
-      $limit: 50
+      $limit: 10
     }
   ])
 
@@ -45,15 +75,17 @@ const getMovieRecommendation = asyncWrapper(async (req, res) => {
 })
 
 const getMoviesByPage = asyncWrapper(async (req, res) => {
-  const limit = 10
+  const limit = parseInt(req.query.limit) || 10
   const skip = limit * (parseInt(req.query.page || 1))
   const movies = await Movie.find({}, {
     fields: {
-      Series_Title: 1,
-      Released_Year: 1,
-      Runtime: 1,
-      Genre: 1,
-      Overview: 1
+      original_title: 1,
+      vote_average: 1,
+      vote_count: 1,
+      overview: 1,
+      release_date: 1,
+      genres: 1,
+      runtime: 1
     },
     limit: limit,
     skip: skip,
@@ -64,4 +96,4 @@ const getMoviesByPage = asyncWrapper(async (req, res) => {
 })
 
 
-module.exports = { getMovieRecommendation, getMoviesByPage }
+module.exports = { getMovieRecommendationV_1, getMoviesByPage, getMovieRecommendationV_2 }
