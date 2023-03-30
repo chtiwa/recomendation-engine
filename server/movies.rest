@@ -1,7 +1,7 @@
-GET http://localhost:5000/api/v1/movies/recommend_1?movie_id=6423942ca243ef348c1967b7
+GET http://localhost:5000/api/v1/movies/recommend_1?movie_id=642458297573e8535557cae0
 content-type:application/json
 
-# GET http://localhost:5000/api/v1/movies/recommend_1?runtime=&_id=6423942ca243ef348c1967b6&vote_average=8.5&vote_count=50000
+# GET http://localhost:5000/api/v1/movies/recommend_2?&movie_id=642458297573e8535557cae0&Genre=Action&IMDB_Rating=8.5&Meta_score=80
 # content-type:application/json
 
 # GET http://localhost:5000/api/v1/movies/?page=2&limit=10
