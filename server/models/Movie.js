@@ -1,28 +1,21 @@
 const mongoose = require('mongoose')
 
 const MovieSchema = new mongoose.Schema({
-  adult: String,
-  belongs_to_collection: String,
-  budget: String,
-  genres: String,
-  homepage: String,
-  id: String,
-  imdb_id: String,
-  original_language: String,
-  original_title: String,
-  overview: String,
-  popularity: String,
-  poster_path: String,
-  production_companies: String,
-  production_countries: String,
-  release_date: String,
-  revenue: String,
-  spoken_languages: String,
-  status: String,
-  title: String,
-  video: String,
-  vote_average: String,
-  vote_count: String
+  Poster_link: String,
+  Series_Title: String,
+  Release_Year: String,
+  Certificate: String,
+  Runtime: String,
+  Genre: String,
+  IMDB_Rating: String,
+  Overview: String,
+  Meta_score: String,
+  Director: String,
+  Star1: String,
+  Star2: String,
+  Star3: String,
+  Star4: String,
+  No_of_Votes: String,
 })
 
 module.exports = mongoose.model('Movie', MovieSchema)
