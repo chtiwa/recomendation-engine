@@ -10,9 +10,9 @@ export const getMovies = createAsyncThunk('auth/getMovies', async (page, { rejec
   }
 })
 
-export const getMovieRecommendationV_1 = createAsyncThunk('auth/getMovieRecommendationV_1', async ({ search, page }, { rejectWithValue }) => {
+export const getMovieRecommendationV_1 = createAsyncThunk('auth/getMovieRecommendationV_1', async (search, { rejectWithValue }) => {
   try {
-    const { data } = await axiosInstance.get(`/movies/recommend_1?movie_title=${search}&page=${page}`)
+    const { data } = await axiosInstance.get(`/movies/recommend_1?movie_title=${search}`)
     return data
   } catch (error) {
     return rejectWithValue({ message: error?.response?.data?.message || 'There was an error' })
@@ -45,7 +45,7 @@ const moviesSlice = createSlice({
       state.page = Number(payload.page)
       state.totalPages = payload.totalPages
     },
-    [getMovies.pending]: (state, { payload }) => {
+    [getMovies.rejected]: (state, { payload }) => {
       state.getMoviesLoading = false
       state.getMoviesError = payload
     },
@@ -55,10 +55,10 @@ const moviesSlice = createSlice({
     [getMovieRecommendationV_1.fulfilled]: (state, { payload }) => {
       state.getMoviesLoading = false
       state.movies = payload.movies
-      state.page = Number(payload.page)
-      state.totalPages = payload.totalPages
+      state.page = null
+      state.totalPages = null
     },
-    [getMovieRecommendationV_1.pending]: (state, { payload }) => {
+    [getMovieRecommendationV_1.rejected]: (state, { payload }) => {
       state.getMoviesLoading = false
       state.getMoviesError = payload
     },

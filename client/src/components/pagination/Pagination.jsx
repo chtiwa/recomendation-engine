@@ -29,15 +29,19 @@ const PaginationComponent = ({ setPage }) => {
   }, [page, totalPages, setRightPages, setLeftPages])
 
   const scrollToTop = () => {
-    // window.scrollTo({
-    //   top: 0,
-    //   behavior: 'smooth'
-    // })
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
   }
 
   const handleClick = (number) => {
     setPage(number)
     scrollToTop()
+  }
+
+  if (totalPages === null) {
+    return null
   }
 
   return (

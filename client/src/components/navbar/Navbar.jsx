@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import './navbar.css'
 import { Container, Navbar, Form, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
-import { getMovieRecommendationV_1 } from '../../features/moviesSlice'
+import { getMovieRecommendationV_1, getMovies } from '../../features/moviesSlice'
 
 const NavbarComponent = () => {
   const dispatch = useDispatch()
@@ -18,7 +18,11 @@ const NavbarComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    dispatch(getMovieRecommendationV_1({ search, page }))
+    if (search.length < 1) {
+      dispatch(getMovies(1))
+      return
+    }
+    dispatch(getMovieRecommendationV_1(search))
   }
 
   return (
@@ -44,7 +48,7 @@ const NavbarComponent = () => {
             onClick={() => setExpanded(true)}
             onBlur={() => setExpanded(false)}
           />
-          <Button variant="light">Search</Button>
+          <Button variant="light" type="submit">Search</Button>
         </Form>
       </Container>
     </Navbar>
