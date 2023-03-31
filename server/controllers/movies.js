@@ -1,6 +1,6 @@
 const Movie = require('../models/Movie')
 const asyncWrapper = require('../middleware/async-wrapper')
-const BaseError = require('../middleware/error-handler')
+const BaseError = require('../errors/base-error')
 
 
 function calculateDistance(movie1, movie2) {
@@ -19,7 +19,11 @@ function calculateDistance(movie1, movie2) {
 }
 
 const getMovieRecommendationV_1 = asyncWrapper(async (req, res) => {
-  const movie = await Movie.findById(req.query.movie_id)
+
+  // const movie = await Movie.findById(req.query.movie_id)
+  const regex = new RegExp(req.query.title, 'i')
+  const query = { Series_Title: { $regex: regex } }
+  const movie = await Movie.findOne(query)
   if (!movie) {
     throw new BaseError("The movie doesn't exist", 404)
   }
@@ -37,9 +41,13 @@ const getMovieRecommendationV_1 = asyncWrapper(async (req, res) => {
   const distances = movies.map((otherMovie) => ({ movie: otherMovie, distance: calculateDistance(movie, otherMovie) }))
 
   distances.sort((a, b) => b.distance - a.distance)
+  // the limit of the movies per page
+  const limit = parseInt(req.query.limit) || 10
+  const skip = limit * (parseInt(req.query.page || 1))
+  const totalPages = Math.ceil(movies.length / limit)
 
   const recommendations = distances.map((distance) => distance.movie)
-  res.status(200).json({ success: true, movies: recommendations })
+  res.status(200).json({ success: true, movies: recommendations, totalPages: totalPages, page: req.query.page })
 
 })
 
@@ -90,7 +98,7 @@ const getMovieRecommendationV_2 = asyncWrapper(async (req, res) => {
 const getMoviesByPage = asyncWrapper(async (req, res) => {
   const limit = parseInt(req.query.limit) || 20
   const skip = limit * (parseInt(req.query.page || 1))
-  const totalPages = await Movie.countDocuments() / limit
+  const totalPages = Math.ceil(await Movie.countDocuments() / limit)
   const movies = await Movie.find({}, {
     Poster_Link: 1,
     Series_Title: 1,

@@ -1,0 +1,10 @@
+.movie-card {
+  min-height: 500px;
+}
+
+.movie-card-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: contain;
+}

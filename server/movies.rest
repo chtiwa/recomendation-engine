@@ -1,8 +1,11 @@
-GET http://localhost:5000/api/v1/movies/recommend_1?movie_id=642458297573e8535557cae0
+# GET http://localhost:5000/api/v1/movies/recommend_1?movie_id=642458297573e8535557cae0
+# content-type:application/json
+
+GET http://localhost:5000/api/v1/movies/recommend_1?movie_title=inception&page=1
 content-type:application/json
 
 # GET http://localhost:5000/api/v1/movies/recommend_2?&movie_id=642458297573e8535557cae0&Genre=Action&IMDB_Rating=8.5&Meta_score=80
 # content-type:application/json
 
-# GET http://localhost:5000/api/v1/movies/?page=2&limit=10
+# GET http://localhost:5000/api/v1/movies/?page=50&limit=10
 # content-type:application/json

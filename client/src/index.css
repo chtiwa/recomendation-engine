@@ -32,3 +32,11 @@ button {
   border: 0;
   box-shadow: 0 0 3px var(--shadow-1);
 }
+
+/* pagination */
+.pagination-component {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
